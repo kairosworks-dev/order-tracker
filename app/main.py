@@ -9,6 +9,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
+from app import telemetry
+
 
 DB_PATH = Path(os.getenv("ORDER_DB_PATH", "data/orders.db"))
 STATUSES = {"received", "preparing", "shipped", "delivered"}
@@ -76,6 +78,7 @@ async def lifespan(_app: FastAPI):
     yield
 
 
+telemetry.setup()
 app = FastAPI(title="Order Tracker", lifespan=lifespan)
 
 
@@ -98,13 +101,18 @@ def list_orders():
     return [as_dict(row) for row in rows]
 
 
-@app.get("/api/orders/{order_id}")
-def get_order(order_id: str):
+def load_order(order_id: str):
     with connect() as db:
         row = db.execute("SELECT * FROM orders WHERE id = ?", (order_id,)).fetchone()
     if row is None:
         raise HTTPException(404, "Order not found")
     return order_detail(row)
+
+
+@app.get("/api/orders/{order_id}")
+def get_order(order_id: str):
+    with telemetry.track_request("/api/orders/{order_id}", attributes={"order.id": order_id}):
+        return load_order(order_id)
 
 
 @app.post("/api/orders", status_code=201)
@@ -118,7 +126,7 @@ def create_order(order: NewOrder):
             (order_id, order.customer, order.item, order.priority, "received",
              datetime.now(timezone.utc).isoformat()),
         )
-    return get_order(order_id)
+    return load_order(order_id)
 
 
 @app.patch("/api/orders/{order_id}")
@@ -132,4 +140,4 @@ def update_status(order_id: str, update: StatusUpdate):
         )
     if cursor.rowcount == 0:
         raise HTTPException(404, "Order not found")
-    return get_order(order_id)
+    return load_order(order_id)
