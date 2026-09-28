@@ -1,0 +1,22 @@
+apiVersion: 1
+
+# Firing and resolved alerts go to the incident responder on the host.
+# The responder listens on the host's 127.0.0.1; Docker Desktop forwards
+# host.docker.internal to it.
+contactPoints:
+  - orgId: 1
+    name: incident-responder
+    receivers:
+      - uid: incident-responder-webhook
+        type: webhook
+        settings:
+          url: http://host.docker.internal:8001/alerts
+          httpMethod: POST
+
+policies:
+  - orgId: 1
+    receiver: incident-responder
+    group_by: [alertname]
+    group_wait: 10s
+    group_interval: 1m
+    repeat_interval: 4h
