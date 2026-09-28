@@ -1,14 +1,19 @@
 """OpenTelemetry setup and request instrumentation.
 
-Signals are printed to stdout for now, so they show up in `docker compose logs app`.
+With OTEL_EXPORTER_OTLP_ENDPOINT set (as in Compose), signals go over OTLP to
+the Collector. Without it, they are printed to stdout.
 """
 
 import logging
+import os
 from contextlib import contextmanager
 
 from fastapi import HTTPException
 from opentelemetry import metrics, trace
 from opentelemetry._logs import set_logger_provider
+from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
+from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.logging.handler import LoggingHandler
 from opentelemetry.sdk._logs import LoggerProvider
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, ConsoleLogRecordExporter
@@ -36,17 +41,22 @@ requests_counter = meter.create_counter(
 
 def setup():
     resource = Resource.create({"service.name": SERVICE_NAME})
+    # The OTLP exporters read the endpoint from the environment themselves.
+    otlp = bool(os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"))
 
     tracer_provider = TracerProvider(resource=resource)
-    tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+    span_exporter = OTLPSpanExporter() if otlp else ConsoleSpanExporter()
+    tracer_provider.add_span_processor(BatchSpanProcessor(span_exporter))
     trace.set_tracer_provider(tracer_provider)
 
     # Export interval comes from OTEL_METRIC_EXPORT_INTERVAL (default 60 s).
-    reader = PeriodicExportingMetricReader(ConsoleMetricExporter())
+    metric_exporter = OTLPMetricExporter() if otlp else ConsoleMetricExporter()
+    reader = PeriodicExportingMetricReader(metric_exporter)
     metrics.set_meter_provider(MeterProvider(resource=resource, metric_readers=[reader]))
 
     logger_provider = LoggerProvider(resource=resource)
-    logger_provider.add_log_record_processor(BatchLogRecordProcessor(ConsoleLogRecordExporter()))
+    log_exporter = OTLPLogExporter() if otlp else ConsoleLogRecordExporter()
+    logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
     set_logger_provider(logger_provider)
     logger.addHandler(LoggingHandler(logger_provider=logger_provider))
     logger.setLevel(logging.INFO)
