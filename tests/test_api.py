@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -33,3 +35,14 @@ def test_create_and_update_order(client):
 
 def test_missing_order(client):
     assert client.get("/api/orders/missing").status_code == 404
+
+
+def test_express_estimated_delivery_crosses_month_boundary(client):
+    # express-1002 is seeded on the last day of the previous month, so adding
+    # two days has to roll over into the next month instead of overflowing.
+    response = client.get("/api/orders/express-1002")
+    assert response.status_code == 200
+    order = response.json()
+    placed_at = datetime.fromisoformat(order["created_at"])
+    expected = (placed_at + timedelta(days=2)).date().isoformat()
+    assert order["estimated_delivery"] == expected

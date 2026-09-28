@@ -1,0 +1,63 @@
+{
+  "receiver": "incident-responder",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "Order lookup returns 5xx",
+        "endpoint": "GET /api/orders/{order_id}",
+        "grafana_folder": "Order Tracker",
+        "service": "order-tracker",
+        "severity": "page"
+      },
+      "annotations": {
+        "dashboard_url": "http://localhost:3000/d/order-tracker/order-tracker",
+        "description": "1 server error(s) on GET /api/orders/{order_id} in the last 5 minutes (window: 5m, threshold: > 0).",
+        "endpoint": "GET /api/orders/{order_id}",
+        "summary": "GET /api/orders/{order_id} returned 5xx in the last 5 minutes",
+        "window": "5m"
+      },
+      "startsAt": "2026-09-28T16:13:20Z",
+      "endsAt": "0001-01-01T00:00:00Z",
+      "generatorURL": "http://localhost:3000/alerting/grafana/order-lookup-5xx/view?orgId=1",
+      "fingerprint": "b3b2758636db585b",
+      "silenceURL": "http://localhost:3000/alerting/silence/new?alertmanager=grafana&matcher=__alert_rule_uid__%3Dorder-lookup-5xx&matcher=endpoint%3DGET+%2Fapi%2Forders%2F%7Border_id%7D&matcher=service%3Dorder-tracker&matcher=severity%3Dpage&orgId=1",
+      "dashboardURL": "http://localhost:3000/d/order-tracker?from=1790608400000&orgId=1&to=1790612010023",
+      "panelURL": "http://localhost:3000/d/order-tracker?from=1790608400000&orgId=1&to=1790612010023&viewPanel=3",
+      "ruleUID": "order-lookup-5xx",
+      "values": {
+        "A": 1.033691449993453,
+        "C": 1
+      },
+      "valueString": "[ var='A' labels={} type='query' value=1.033691449993453 ], [ var='C' labels={} type='threshold' value=1 ]",
+      "orgId": 1
+    }
+  ],
+  "groupLabels": {
+    "alertname": "Order lookup returns 5xx"
+  },
+  "commonLabels": {
+    "alertname": "Order lookup returns 5xx",
+    "endpoint": "GET /api/orders/{order_id}",
+    "grafana_folder": "Order Tracker",
+    "service": "order-tracker",
+    "severity": "page"
+  },
+  "commonAnnotations": {
+    "dashboard_url": "http://localhost:3000/d/order-tracker/order-tracker",
+    "description": "1 server error(s) on GET /api/orders/{order_id} in the last 5 minutes (window: 5m, threshold: > 0).",
+    "endpoint": "GET /api/orders/{order_id}",
+    "summary": "GET /api/orders/{order_id} returned 5xx in the last 5 minutes",
+    "window": "5m"
+  },
+  "externalURL": "http://localhost:3000/",
+  "appVersion": "13.2.2",
+  "version": "1",
+  "groupKey": "{}:{alertname=\"Order lookup returns 5xx\"}",
+  "truncatedAlerts": 0,
+  "orgId": 1,
+  "title": "[FIRING:1] Order lookup returns 5xx (GET /api/orders/{order_id} Order Tracker order-tracker page)",
+  "state": "alerting",
+  "message": "**Firing**\n\nValue: A=1.033691449993453, C=1\nLabels:\n - alertname = Order lookup returns 5xx\n - endpoint = GET /api/orders/{order_id}\n - grafana_folder = Order Tracker\n - service = order-tracker\n - severity = page\nAnnotations:\n - dashboard_url = http://localhost:3000/d/order-tracker/order-tracker\n - description = 1 server error(s) on GET /api/orders/{order_id} in the last 5 minutes (window: 5m, threshold: > 0).\n - endpoint = GET /api/orders/{order_id}\n - summary = GET /api/orders/{order_id} returned 5xx in the last 5 minutes\n - window = 5m\nSource: http://localhost:3000/alerting/grafana/order-lookup-5xx/view?orgId=1\nSilence: http://localhost:3000/alerting/silence/new?alertmanager=grafana&matcher=__alert_rule_uid__%3Dorder-lookup-5xx&matcher=endpoint%3DGET+%2Fapi%2Forders%2F%7Border_id%7D&matcher=service%3Dorder-tracker&matcher=severity%3Dpage&orgId=1\nDashboard: http://localhost:3000/d/order-tracker?from=1790608400000&orgId=1&to=1790612010023\nPanel: http://localhost:3000/d/order-tracker?from=1790608400000&orgId=1&to=1790612010023&viewPanel=3\n"
+}

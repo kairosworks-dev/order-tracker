@@ -1,0 +1,77 @@
+{
+  "collected_at": "2026-09-28T16:13:30.042344+00:00",
+  "lookback": "15m",
+  "metrics": {
+    "query": "sum by (http_route, http_response_status_code) (increase(http_server_requests_total{job=\"order-tracker\"}[15m]))",
+    "result": [
+      {
+        "http_response_status_code": "404",
+        "http_route": "/api/orders/{order_id}",
+        "requests_last_15m": 0
+      },
+      {
+        "http_response_status_code": "200",
+        "http_route": "/api/orders/{order_id}",
+        "requests_last_15m": 0
+      },
+      {
+        "http_response_status_code": "500",
+        "http_route": "/api/orders/{order_id}",
+        "requests_last_15m": 1
+      }
+    ]
+  },
+  "error_logs": {
+    "query": "{service_name=\"order-tracker\"} | severity_text=\"ERROR\"",
+    "lines": [
+      {
+        "time_ns": "1790611982151847936",
+        "line": "GET /api/orders/{order_id} failed",
+        "detected_level": "error",
+        "exception_message": "day is out of range for month",
+        "exception_stacktrace": "Traceback (most recent call last):\n  File \"/app/app/telemetry.py\", line 83, in track_request\n    yield span\n  File \"/app/app/main.py\", line 115, in get_order\n    return load_order(order_id)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/app/main.py\", line 109, in load_order\n    return order_detail(row)\n           ^^^^^^^^^^^^^^^^^\n  File \"/app/app/main.py\", line 60, in order_detail\n    estimated_at = placed_at.replace(day=placed_at.day + 2)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: day is out of range for month\n",
+        "exception_type": "ValueError",
+        "flags": "3",
+        "http_request_method": "GET",
+        "http_response_status_code": "500",
+        "http_route": "/api/orders/{order_id}",
+        "observed_timestamp": "1790611982151974802",
+        "order_id": "express-1002",
+        "scope_name": "order_tracker",
+        "severity_number": "17",
+        "severity_text": "ERROR",
+        "span_id": "bd298f996b647a58",
+        "telemetry_sdk_language": "python",
+        "telemetry_sdk_name": "opentelemetry",
+        "telemetry_sdk_version": "1.45.0",
+        "trace_id": "26f2abb0ed818a5b3206801c71470368"
+      }
+    ]
+  },
+  "error_traces": {
+    "query": "{ status = error }",
+    "traces": [
+      {
+        "trace_id": "26f2abb0ed818a5b3206801c71470368",
+        "spans": [
+          {
+            "name": "GET /api/orders/{order_id}",
+            "status": {
+              "message": "day is out of range for month",
+              "code": "STATUS_CODE_ERROR"
+            },
+            "attributes": {
+              "order.id": "express-1002",
+              "http.response.status_code": "500",
+              "http.request.method": "GET",
+              "http.route": "/api/orders/{order_id}"
+            },
+            "events": [
+              "exception"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
