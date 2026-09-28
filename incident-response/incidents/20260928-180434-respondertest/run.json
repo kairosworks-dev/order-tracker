@@ -1,0 +1,12 @@
+{
+  "agent": "claude-code (headless)",
+  "models": [
+    "claude-opus-5[1m]"
+  ],
+  "exit_code": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "duration_seconds": 10,
+  "total_cost_usd": 0.110324,
+  "permission_denials": []
+}

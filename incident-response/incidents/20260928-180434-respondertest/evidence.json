@@ -1,0 +1,32 @@
+{
+  "collected_at": "2026-09-28T16:04:34.295671+00:00",
+  "lookback": "15m",
+  "metrics": {
+    "query": "sum by (http_route, http_response_status_code) (increase(http_server_requests_total{job=\"order-tracker\"}[15m]))",
+    "result": [
+      {
+        "http_response_status_code": "404",
+        "http_route": "/api/orders/{order_id}",
+        "requests_last_15m": 0
+      },
+      {
+        "http_response_status_code": "200",
+        "http_route": "/api/orders/{order_id}",
+        "requests_last_15m": 0
+      },
+      {
+        "http_response_status_code": "500",
+        "http_route": "/api/orders/{order_id}",
+        "requests_last_15m": 0
+      }
+    ]
+  },
+  "error_logs": {
+    "query": "{service_name=\"order-tracker\"} | severity_text=\"ERROR\"",
+    "lines": []
+  },
+  "error_traces": {
+    "query": "{ status = error }",
+    "traces": []
+  }
+}
