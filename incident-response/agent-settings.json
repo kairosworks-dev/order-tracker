@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "defaultMode": "dontAsk",
+    "allow": [
+      "Read(./**)",
+      "Grep",
+      "Glob",
+      "Edit(./app/**)",
+      "Edit(./tests/**)",
+      "Bash(uv run --frozen pytest:*)",
+      "Bash(docker compose up --build -d --wait app)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker compose logs:*)",
+      "Bash(curl -s http://localhost:8000/:*)",
+      "Bash(curl -i http://localhost:8000/:*)",
+      "Bash(curl -si http://localhost:8000/:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
