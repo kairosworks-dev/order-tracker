@@ -11,9 +11,9 @@
       "Bash(docker compose up --build -d --wait app)",
       "Bash(docker compose ps:*)",
       "Bash(docker compose logs:*)",
-      "Bash(curl -s http://localhost:8000/:*)",
-      "Bash(curl -i http://localhost:8000/:*)",
-      "Bash(curl -si http://localhost:8000/:*)",
+      "Bash(curl -s http://localhost:8000/*)",
+      "Bash(curl -i http://localhost:8000/*)",
+      "Bash(curl -si http://localhost:8000/*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)"
