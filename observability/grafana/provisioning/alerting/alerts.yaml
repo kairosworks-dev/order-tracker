@@ -1,0 +1,53 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: order-tracker
+    folder: Order Tracker
+    interval: 30s
+    rules:
+      - uid: order-lookup-5xx
+        title: Order lookup returns 5xx
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              refId: A
+              instant: true
+              # `or vector(0)`: a quiet period with no 5xx is a 0, not "no data".
+              expr: >-
+                sum(increase(http_server_requests_total{job="order-tracker",
+                http_route="/api/orders/{order_id}",
+                http_response_status_code=~"5.."}[5m])) or vector(0)
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        # Every 5xx on this route is a customer who cannot open their order.
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels:
+          service: order-tracker
+          endpoint: GET /api/orders/{order_id}
+          severity: page
+        annotations:
+          summary: "GET /api/orders/{order_id} returned 5xx in the last 5 minutes"
+          description: >-
+            {{ printf "%.0f" $values.A.Value }} server error(s) on GET /api/orders/{order_id}
+            in the last 5 minutes (window: 5m, threshold: > 0).
+          endpoint: GET /api/orders/{order_id}
+          window: 5m
+          dashboard_url: http://localhost:3000/d/order-tracker/order-tracker
+          __dashboardUid__: order-tracker
+          __panelId__: "3"
